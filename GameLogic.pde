@@ -5,9 +5,10 @@ void startGame() {
       grid[i][j].walked = false;
     }
   }
-  player = startCell;
-  player.walked = true;
+  playerX = startCell.x * w + w / 2.0;
+  playerY = startCell.y * w + w / 2.0;
   draggingPlayer = false;
+  playerRadiusDefault = playerRadiusOriginal;
   playerRadius = playerRadiusDefault;
   targetPlayerRadius = playerRadiusDefault;
   gameEndTimeSec = 0;
@@ -29,42 +30,30 @@ void handleDraggingMove() {
   
   targetPlayerRadius = playerRadiusDefault * 0.85;
   
-  int i = floor(mouseX / w);
-  int j = floor(mouseY / w);
+  float oldPlayerX = playerX;
+  float oldPlayerY = playerY;
+  
+  float newPlayerX = mouseX;
+  float newPlayerY = mouseY;
+  
+  boolean collision = checkWallCollision(newPlayerX, newPlayerY, playerRadius) || 
+                     checkPathCollision(oldPlayerX, oldPlayerY, newPlayerX, newPlayerY, playerRadius);
+  
+  if (collision) {
+    if (!collisionAnimating) {
+      startCollisionAnimation();
+    }
+    playerX = oldPlayerX;
+    playerY = oldPlayerY;
+  } else {
+    playerX = newPlayerX;
+    playerY = newPlayerY;
+  }
+  
+  int i = floor(playerX / w);
+  int j = floor(playerY / w);
   
   if (i < 0 || i >= cols || j < 0 || j >= rows) return;
-  
-  Cell target = grid[i][j];
-  
-  int dx = target.x - player.x;
-  int dy = target.y - player.y;
-  
-  if ((abs(dx) == 1 && dy == 0) || (dx == 0 && abs(dy) == 1)) {
-    boolean collision = false;
-    
-    if (dx == 1 && !player.walls[1]) {
-      player = target;
-      player.walked = true;
-    } else if (dx == -1 && !player.walls[3]) {
-      player = target;
-      player.walked = true;
-    } else if (dy == 1 && !player.walls[2]) {
-      player = target;
-      player.walked = true;
-    } else if (dy == -1 && !player.walls[0]) {
-      player = target;
-      player.walked = true;
-    } else {
-      collision = true;
-    }
-    
-    if (collision && !collisionAnimating) {
-      collisionAnimating = true;
-      collisionTime = millis();
-      targetPlayerRadius = playerRadiusDefault * 0.5;
-      shakeAmount = 5.0;
-    }
-  }
   
   if (collisionAnimating) {
     int elapsed = millis() - collisionTime;
@@ -81,8 +70,69 @@ void handleDraggingMove() {
   }
 }
 
+void startCollisionAnimation() {
+  collisionAnimating = true;
+  collisionTime = millis();
+  shakeAmount = 5;
+  
+  playerRadiusDefault *= 0.8;
+  if (playerRadiusDefault < 3) {
+    gameState = STATE_GAME_OVER;
+    gameEndTimeSec = (millis() - gameStartMillis) / 1000.0;
+  }
+}
+
 float easeOutElastic(float x) {
   float c4 = (2 * PI) / 3;
   if (x == 0 || x == 1) return x;
   return pow(2, -10 * x) * sin((x * 10 - 0.75) * c4) + 1;
+}
+boolean checkWallCollision(float x, float y, float radius) {
+  if (x - radius < 0 || x + radius > cols * w || 
+      y - radius < 0 || y + radius > rows * w) {
+    return true;
+  }
+  
+  int minI = floor((x - radius) / w);
+  int maxI = floor((x + radius) / w);
+  int minJ = floor((y - radius) / w);
+  int maxJ = floor((y + radius) / w);
+  
+  minI = max(0, minI);
+  maxI = min(cols - 1, maxI);
+  minJ = max(0, minJ);
+  maxJ = min(rows - 1, maxJ);
+  
+  for (int i = minI; i <= maxI; i++) {
+    for (int j = minJ; j <= maxJ; j++) {
+      Cell cell = grid[i][j];
+      
+      if (cell.walls[0] && y - radius < j * w) return true;
+      if (cell.walls[1] && x + radius > (i + 1) * w) return true;
+      if (cell.walls[2] && y + radius > (j + 1) * w) return true;
+      if (cell.walls[3] && x - radius < i * w) return true;
+    }
+  }
+  
+  return false;
+}
+
+boolean checkPathCollision(float x1, float y1, float x2, float y2, float radius) {
+  float distance = dist(x1, y1, x2, y2);
+  
+  if (distance < 2) return false;
+  
+  int steps = int(distance / 5) + 1;
+  
+  for (int i = 1; i < steps; i++) {
+    float t = (float)i / steps;
+    float x = lerp(x1, x2, t);
+    float y = lerp(y1, y2, t);
+    
+    if (checkWallCollision(x, y, radius)) {
+      return true;
+    }
+  }
+  
+  return false;
 }

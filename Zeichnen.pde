@@ -79,8 +79,8 @@ void drawPlayer() {
   
   playerRadius = lerp(playerRadius, targetPlayerRadius, animationSpeed);
   
-  float x = player.x * w + w / 2.0;
-  float y = player.y * w + w / 2.0;
+  float x = playerX;
+  float y = playerY;
   
   noStroke();
   

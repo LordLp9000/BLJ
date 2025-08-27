@@ -10,7 +10,8 @@ void initMaze() {
   }
   startCell = grid[0][0];
   endCell = grid[cols - 1][rows - 1];
-  player = startCell;
+  playerX = startCell.x * w + w / 2.0;
+  playerY = startCell.y * w + w / 2.0;
 
   playerRadiusDefault = w * 0.4;
   playerRadius = playerRadiusDefault;

@@ -9,15 +9,16 @@ static final int STATE_GAME_OVER = 3;
 
 int gameState = STATE_MENU;
 int cols, rows;
-int w = 15;
+int w = 80;
 Cell[][] grid;
 Stack<Cell> stack = new Stack<Cell>();
 Cell current;
 Cell startCell;
 Cell endCell;
-Cell player;
+float playerX, playerY;
 boolean mazeGenerated = false;
 float playerRadiusDefault;
+float playerRadiusOriginal = 15.0;
 float playerRadius;
 float targetPlayerRadius;
 boolean draggingPlayer = false;
@@ -34,7 +35,7 @@ long lastFrameTime = 0;
 float deltaTime = 0;
 
 void setup() {
-  size(500, 500);
+  size(800, 800);
   frameRate(60);
   smooth();
   surface.setTitle("Maze - Mouse Drag, Collisions, Highscores");
@@ -92,7 +93,10 @@ void draw() {
     textSize(16);
     text(nf((millis() - gameStartMillis) / 1000.0, 0, 2) + "s", width - 40, 20);
     
-    if (player == endCell) {
+      int playerCellX = floor(playerX / w);
+    int playerCellY = floor(playerY / w);
+    
+    if (playerCellX == endCell.x && playerCellY == endCell.y) {
       gameEndTimeSec = (millis() - gameStartMillis) / 1000.0;
       addHighscore(gameEndTimeSec);
       savedHighscores();
@@ -121,8 +125,8 @@ void mousePressed() {
   }
   if (gameState != STATE_PLAYING) return;
   
-  float cx = player.x * w + w / 2.0;
-  float cy = player.y * w + w / 2.0;
+  float cx = playerX;
+  float cy = playerY;
   float d = dist(mouseX, mouseY, cx, cy);
   if (d <= playerRadius) {
     draggingPlayer = true;
