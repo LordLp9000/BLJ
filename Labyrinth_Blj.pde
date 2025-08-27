@@ -6,6 +6,12 @@ static final int STATE_MENU = 0;
 static final int STATE_GENERATING = 1;
 static final int STATE_PLAYING = 2;
 static final int STATE_GAME_OVER = 3;
+static final int STATE_SEED_MENU = 4;
+long currentSeed = 12345;
+String seedInput = "";
+boolean typingCustomSeed = false;
+long[] predefinedSeeds = {12345, 11111, 54321, 33333, 44444, 55555, 66666};
+String[] seedNames = {"Classic", "Twisted", "Challenge", "Simple", "Complex"};
 
 int gameState = STATE_MENU;
 int cols, rows;
@@ -43,6 +49,12 @@ void setup() {
 }
 
 void draw() {
+  if (gameState == STATE_SEED_MENU) {
+drawGridBase(false);
+drawPlayerGhost();
+drawSeedMenu();
+return;
+}
   long currentTime = millis();
   deltaTime = (currentTime - lastFrameTime) / 1000.0f;
   lastFrameTime = currentTime;
@@ -109,7 +121,7 @@ void draw() {
 
 void mousePressed() {
   if (gameState == STATE_MENU) {
-    startGame();
+    gameState = STATE_SEED_MENU;
     return;
   }
   if (gameState == STATE_GAME_OVER) {
@@ -131,6 +143,10 @@ void mouseReleased() {
   draggingPlayer = false;
 }
 
+void backToMenu() {
+  gameState = STATE_MENU;
+}
+
 void keyPressed() {
   if (key == 'r' || key == 'R') {
     initMaze();
@@ -138,5 +154,19 @@ void keyPressed() {
   if (key == 'n' || key == 'N') {
     initMaze();
     startGame();
+  }
+  if (key == 'b' || key == 'B') {
+    backToMenu();
+  }
+  if (key == ' ' || key == ' ') {
+    initMaze();
+    startGame();
+  }
+  
+  if (gameState == STATE_SEED_MENU && key >= '1' && key <= '7') {
+    int seedIndex = key - '1';  // Convert '1' to 0, '2' to 1, etc.
+    if (seedIndex < predefinedSeeds.length) {
+      currentSeed = predefinedSeeds[seedIndex];
+    }
   }
 }

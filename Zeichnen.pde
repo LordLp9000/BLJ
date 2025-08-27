@@ -47,6 +47,46 @@ void drawMenu() {
   }
 }
 
+void drawSeedMenu() {
+  fill(40, 45, 50, 220);
+  noStroke();
+  rect(width/4, 20, width/2, height - 40);
+  
+  fill(0, 200, 255);
+  textSize(28);
+  text("Choose Maze Seed", width / 2, 60);
+  
+  // Draw predefined seed options
+  textSize(18);
+  fill(255);
+  text("Predefined Mazes:", width / 2, 100);
+  
+  for (int i = 0; i < predefinedSeeds.length && i < seedNames.length; i++) {
+    float y = 130 + i * 35;
+    
+    // Highlight selected seed
+    if (currentSeed == predefinedSeeds[i]) {
+      fill(0, 150, 255, 100);
+      noStroke();
+      rect(width/4 + 10, y - 15, width/2 - 20, 30);
+    }
+    
+    fill(255);
+    textSize(16);
+    text(seedNames[i] + " (" + predefinedSeeds[i] + ")", width / 2, y);
+  }
+  
+  // Back button
+  fill(150);
+  textSize(14);
+  text("Press 'B' to go back", width / 2, height - 60);
+  
+  // Start button
+  fill(0, 200, 255);
+  textSize(18);
+  text("Press SPACE to start with selected seed", width / 2, height - 30);
+}
+
 void drawGameOver() {
   fill(0, 150);
   rect(0, 0, width, height);

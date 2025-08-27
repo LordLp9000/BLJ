@@ -1,5 +1,5 @@
 void initMaze() {
-  randomSeed(12345);
+  randomSeed(currentSeed);
   cols = floor(width / w);
   rows = floor(height / w);
   grid = new Cell[cols][rows];
