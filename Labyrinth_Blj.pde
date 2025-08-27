@@ -1,6 +1,7 @@
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 static final int STATE_MENU = 0;
 static final int STATE_GENERATING = 1;
@@ -33,7 +34,8 @@ int collisionTime = 0;
 int collisionDuration = 400;
 float shakeAmount = 0;
 int gameEndScore = 0;
-ArrayList<Integer> highscores = new ArrayList<Integer>(); 
+HashMap<Long, ArrayList<Integer>> seedHighscores = new HashMap<Long, ArrayList<Integer>>();
+ArrayList<Integer> highscores = new ArrayList<Integer>(); // Current seed's highscores
 int maxHighscores = 10;
 long lastFrameTime = 0;
 float deltaTime = 0;
@@ -44,7 +46,8 @@ void setup() {
   smooth();
   surface.setTitle("Maze - Mouse Drag, Collisions, Highscores");
   textAlign(CENTER, CENTER);
-  loadHighscores();
+  loadAllHighscores();
+  loadCurrentSeedHighscores();
   initMaze();
 }
 
@@ -106,7 +109,7 @@ return;
     if (playerCellX == endCell.x && playerCellY == endCell.y) {
       gameEndScore = getCurrentScore();
       addHighscore(gameEndScore);
-      savedHighscores();
+      saveCurrentSeedHighscores();
       gameState = STATE_GAME_OVER;
     }
     return;
@@ -167,6 +170,7 @@ void keyPressed() {
     int seedIndex = key - '1';  // Convert '1' to 0, '2' to 1, etc.
     if (seedIndex < predefinedSeeds.length) {
       currentSeed = predefinedSeeds[seedIndex];
+      loadCurrentSeedHighscores(); // Load highscores for the new seed
     }
   }
 }

@@ -34,7 +34,7 @@ void drawMenu() {
   
   fill(0, 200, 255);
   textSize(22);
-  text("Highscores", width / 2, 100);
+  text("Highscores (Seed: " + currentSeed + ")", width / 2, 100);
   textSize(18);
   if (highscores.size() == 0) {
     text("Keine Punkte bisher", width / 2, 130);
@@ -73,7 +73,13 @@ void drawSeedMenu() {
     
     fill(255);
     textSize(16);
-    text(seedNames[i] + " (" + predefinedSeeds[i] + ")", width / 2, y);
+    // Show best score for this seed
+    ArrayList<Integer> seedScores = seedHighscores.get(predefinedSeeds[i]);
+    String bestScore = "";
+    if (seedScores != null && seedScores.size() > 0) {
+      bestScore = " - Best: " + seedScores.get(0);
+    }
+    text(seedNames[i] + " (" + predefinedSeeds[i] + ")" + bestScore, width / 2, y);
   }
   
   // Back button
@@ -99,7 +105,7 @@ void drawGameOver() {
   text("Your Score: " + gameEndScore, width / 2, height / 3);
   
   textSize(20);
-  text("Highscores:", width / 2, height / 3 + 40);
+  text("Highscores (Seed: " + currentSeed + "):", width / 2, height / 3 + 40);
   
   int show = min(maxHighscores, highscores.size());
   for (int i = 0; i < show; i++) {
