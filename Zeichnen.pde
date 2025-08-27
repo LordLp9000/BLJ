@@ -1,0 +1,106 @@
+void drawGridBase(boolean showVisited) {
+  for (int j = 0; j < rows; j++) {
+    for (int i = 0; i < cols; i++) {
+      if (showVisited && grid[i][j].visited) {
+        float x = i * w;
+        float y = j * w;
+        noStroke();
+        fill(255, 100);
+        rect(x, y, w, w);
+      }
+      grid[i][j].show();
+    }
+  }
+}
+
+void drawStartEnd() {
+}
+
+void drawPlayerGhost() {
+  float x = startCell.x * w + w / 2.0;
+  float y = startCell.y * w + w / 2.0;
+  fill(0, 150, 255, 150);
+  noStroke();
+  ellipse(x, y, playerRadiusDefault * 2, playerRadiusDefault * 2);
+}
+
+void drawMenu() {
+  fill(40, 45, 50, 220);
+  noStroke();
+  rect(width/4, 20, width/2, 200);
+  
+  fill(0, 200, 255);
+  textSize(32);
+  text("Labyrinth", width / 2, 60);
+  
+  fill(0, 200, 255);
+  textSize(22);
+  text("Highscores (s)", width / 2, 100);
+  textSize(18);
+  if (highscores.size() == 0) {
+    text("Keine Punkte bisher", width / 2, 130);
+  } else {
+    int show = min(5, highscores.size());
+    for (int i = 0; i < show; i++) {
+      String line = (i + 1) + ". " + nf(highscores.get(i), 0, 2);
+      text(line, width / 2, 130 + i * 20);
+    }
+  }
+}
+
+void drawGameOver() {
+  fill(0, 150);
+  rect(0, 0, width, height);
+  
+  fill(255);
+  textSize(32);
+  text("Game Over!", width / 2, height / 3 - 50);
+  
+  textSize(24);
+  text("Your Time: " + nf(gameEndTimeSec, 0, 2) + "s", width / 2, height / 3);
+  
+  textSize(20);
+  text("Highscores:", width / 2, height / 3 + 40);
+  
+  int show = min(maxHighscores, highscores.size());
+  for (int i = 0; i < show; i++) {
+    String line = (i + 1) + ". " + nf(highscores.get(i), 0, 2) + "s";
+    text(line, width / 2, height / 3 + 70 + i * 25);
+  }
+  
+  textSize(16);
+  text("Click anywhere to play again", width / 2, height - 50);
+}
+
+void drawPlayer() {
+  float animationSpeed = 10.0 * deltaTime;
+  if (animationSpeed < 0.05) animationSpeed = 0.05;
+  if (animationSpeed > 0.3) animationSpeed = 0.3;
+  
+  playerRadius = lerp(playerRadius, targetPlayerRadius, animationSpeed);
+  
+  float x = player.x * w + w / 2.0;
+  float y = player.y * w + w / 2.0;
+  
+  noStroke();
+  
+  float glowSize = playerRadius * 2.2;
+  if (collisionAnimating) {
+    float pulseAmount = sin((millis() - collisionTime) * 0.02) * 0.2 + 1.0;
+    glowSize *= pulseAmount;
+    fill(255, 100, 100, 80);
+  } else {
+    fill(0, 150, 255, 80);
+  }
+  ellipse(x, y, glowSize, glowSize);
+  
+  if (collisionAnimating) {
+    fill(255, 100, 150);
+  } else {
+    fill(0, 150, 255);
+  }
+  ellipse(x, y, playerRadius * 2, playerRadius * 2);
+  
+  fill(255, 255, 255, 150);
+  ellipse(x - playerRadius * 0.3, y - playerRadius * 0.3, playerRadius * 0.8, playerRadius * 0.8);
+}
