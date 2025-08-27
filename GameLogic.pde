@@ -13,7 +13,6 @@ void startGame() {
   targetPlayerRadius = playerRadiusDefault;
   resetScore();
   gameEndScore = 0;
-  gameStartMillis = 0;
   gameState = STATE_GENERATING;
 }
 
