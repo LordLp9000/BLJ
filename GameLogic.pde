@@ -11,7 +11,8 @@ void startGame() {
   playerRadiusDefault = playerRadiusOriginal;
   playerRadius = playerRadiusDefault;
   targetPlayerRadius = playerRadiusDefault;
-  gameEndTimeSec = 0;
+  resetScore();
+  gameEndScore = 0;
   gameStartMillis = 0;
   gameState = STATE_GENERATING;
 }
@@ -50,11 +51,6 @@ void handleDraggingMove() {
     playerY = newPlayerY;
   }
   
-  int i = floor(playerX / w);
-  int j = floor(playerY / w);
-  
-  if (i < 0 || i >= cols || j < 0 || j >= rows) return;
-  
   if (collisionAnimating) {
     int elapsed = millis() - collisionTime;
     if (elapsed > collisionDuration) {
@@ -74,11 +70,12 @@ void startCollisionAnimation() {
   collisionAnimating = true;
   collisionTime = millis();
   shakeAmount = 5;
+  triggerMistake();
   
   playerRadiusDefault *= 0.8;
   if (playerRadiusDefault < 3) {
     gameState = STATE_GAME_OVER;
-    gameEndTimeSec = (millis() - gameStartMillis) / 1000.0;
+    gameEndScore = getCurrentScore();
   }
 }
 

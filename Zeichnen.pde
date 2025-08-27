@@ -13,8 +13,7 @@ void drawGridBase(boolean showVisited) {
   }
 }
 
-void drawStartEnd() {
-}
+
 
 void drawPlayerGhost() {
   float x = startCell.x * w + w / 2.0;
@@ -35,14 +34,14 @@ void drawMenu() {
   
   fill(0, 200, 255);
   textSize(22);
-  text("Highscores (s)", width / 2, 100);
+  text("Highscores", width / 2, 100);
   textSize(18);
   if (highscores.size() == 0) {
     text("Keine Punkte bisher", width / 2, 130);
   } else {
     int show = min(5, highscores.size());
     for (int i = 0; i < show; i++) {
-      String line = (i + 1) + ". " + nf(highscores.get(i), 0, 2);
+      String line = (i + 1) + ". " + highscores.get(i);
       text(line, width / 2, 130 + i * 20);
     }
   }
@@ -57,14 +56,14 @@ void drawGameOver() {
   text("Game Over!", width / 2, height / 3 - 50);
   
   textSize(24);
-  text("Your Time: " + nf(gameEndTimeSec, 0, 2) + "s", width / 2, height / 3);
+  text("Your Score: " + gameEndScore, width / 2, height / 3);
   
   textSize(20);
   text("Highscores:", width / 2, height / 3 + 40);
   
   int show = min(maxHighscores, highscores.size());
   for (int i = 0; i < show; i++) {
-    String line = (i + 1) + ". " + nf(highscores.get(i), 0, 2) + "s";
+    String line = (i + 1) + ". " + highscores.get(i);
     text(line, width / 2, height / 3 + 70 + i * 25);
   }
   

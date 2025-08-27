@@ -26,10 +26,8 @@ boolean collisionAnimating = false;
 int collisionTime = 0;
 int collisionDuration = 400;
 float shakeAmount = 0;
-int lastCollisionDirection = -1;
-float gameStartMillis = 0;
-float gameEndTimeSec = 0;
-ArrayList<Float> highscores = new ArrayList<Float>(); 
+int gameEndScore = 0;
+ArrayList<Integer> highscores = new ArrayList<Integer>(); 
 int maxHighscores = 10;
 long lastFrameTime = 0;
 float deltaTime = 0;
@@ -53,7 +51,6 @@ void draw() {
   
   if (gameState == STATE_MENU) {
     drawGridBase(false);
-    drawStartEnd();
     drawPlayerGhost();
     drawMenu();
     return;
@@ -70,7 +67,6 @@ void draw() {
     }
     
     drawGridBase(true);
-    drawStartEnd();
     
     fill(255);
     textSize(16);
@@ -78,27 +74,26 @@ void draw() {
     
     if (mazeGenerated) {
       gameState = STATE_PLAYING;
-      gameStartMillis = millis();
     }
     return;
   }
   
   if (gameState == STATE_PLAYING) {
     drawGridBase(true);
-    drawStartEnd();
     handleDraggingMove();
+    updateScore();
     drawPlayer();
     
     fill(255);
     textSize(16);
-    text(nf((millis() - gameStartMillis) / 1000.0, 0, 2) + "s", width - 40, 20);
+    text("Score: " + getCurrentScore(), width - 60, 20);
     
-      int playerCellX = floor(playerX / w);
+    int playerCellX = floor(playerX / w);
     int playerCellY = floor(playerY / w);
     
     if (playerCellX == endCell.x && playerCellY == endCell.y) {
-      gameEndTimeSec = (millis() - gameStartMillis) / 1000.0;
-      addHighscore(gameEndTimeSec);
+      gameEndScore = getCurrentScore();
+      addHighscore(gameEndScore);
       savedHighscores();
       gameState = STATE_GAME_OVER;
     }
@@ -107,7 +102,6 @@ void draw() {
   
   if (gameState == STATE_GAME_OVER) {
     drawGridBase(true);
-    drawStartEnd();
     drawPlayer();
     drawGameOver();
   }

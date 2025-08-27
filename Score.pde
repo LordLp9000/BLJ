@@ -1,15 +1,16 @@
-// Score-Verwaltung für das Labyrinth-Spiel
-
-// Score-Variablen
 int score = 1000;
-boolean mistakeHappened = false; // Simuliert Fehler, z.B. Kollision
+boolean mistakeHappened = false;
+int frameCounter = 0;
 
-// Score-Funktionen
 void updateScore() {
-  score -= 1; // Pro Frame 1 Punkt abziehen
+  frameCounter++;
+  if (frameCounter >= 60) {
+    score -= 1;
+    frameCounter = 0;
+  }
   if (mistakeHappened) {
-    score -= 50; // Bei Fehler 50 Punkte abziehen
-    mistakeHappened = false; // Fehler zurücksetzen
+    score -= 50;
+    mistakeHappened = false;
   }
   if (score < 0) score = 0;
 }
@@ -17,6 +18,7 @@ void updateScore() {
 void resetScore() {
   score = 1000;
   mistakeHappened = false;
+  frameCounter = 0;
 }
 
 void triggerMistake() {

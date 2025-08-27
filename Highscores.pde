@@ -5,20 +5,20 @@ void loadHighscores() {
     if (lines != null) {
       for (String line : lines) {
         try {
-          float score = Float.parseFloat(line.trim());
+          int score = Integer.parseInt(line.trim());
           highscores.add(score);
         } catch (NumberFormatException e) {
         }
       }
     }
-    Collections.sort(highscores);
+    Collections.sort(highscores, Collections.reverseOrder());
   } catch (Exception e) {
     println("Could not load highscores: " + e.getMessage());
   }
 }
 
 void savedHighscores() {
-  Collections.sort(highscores);
+  Collections.sort(highscores, Collections.reverseOrder());
   while (highscores.size() > maxHighscores) {
     highscores.remove(highscores.size() - 1);
   }
@@ -35,9 +35,9 @@ void savedHighscores() {
   }
 }
 
-void addHighscore(float time) {
-  highscores.add(time);
-  Collections.sort(highscores);
+void addHighscore(int score) {
+  highscores.add(score);
+  Collections.sort(highscores, Collections.reverseOrder());
   while (highscores.size() > maxHighscores) {
     highscores.remove(highscores.size() - 1);
   }
