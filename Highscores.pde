@@ -1,6 +1,5 @@
 void loadAllHighscores() {
   seedHighscores.clear();
-  // Load highscores for all predefined seeds
   for (long seed : predefinedSeeds) {
     loadSeedHighscores(seed);
   }
@@ -43,7 +42,6 @@ void saveCurrentSeedHighscores() {
     highscores.remove(highscores.size() - 1);
   }
   
-  // Update the HashMap
   seedHighscores.put(currentSeed, new ArrayList<Integer>(highscores));
   
   String[] lines = new String[highscores.size()];

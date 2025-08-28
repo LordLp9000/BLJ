@@ -65,31 +65,6 @@ void handleDraggingMove() {
   }
 }
 
-void startCollisionAnimation() {
-  collisionAnimating = true;
-  collisionTime = millis();
-  shakeAmount = 5;
-  triggerMistake();
-  
-  // Play collision sound
-  if (collisionSound != null) {
-    collisionSound.play();
-  } else if (beepOsc != null && beepEnv != null) {
-    // Play programmatic beep
-    beepOsc.freq(800); // 800 Hz frequency
-    beepEnv.play(beepOsc, 0.01, 0.1, 0.3, 0.1); // attack, sustain, sustainLevel, release
-  }
-  
-  playerRadiusDefault *= 0.8;
-  if (playerRadiusDefault < 3) {
-    // Play death sound
-    if (deathSound != null) {
-      deathSound.play();
-    }
-    gameState = STATE_GAME_OVER;
-    gameEndScore = getCurrentScore();
-  }
-}
 
 float easeOutElastic(float x) {
   float c4 = (2 * PI) / 3;

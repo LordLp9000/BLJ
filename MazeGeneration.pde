@@ -1,28 +1,3 @@
-void initMaze() {
-  randomSeed(currentSeed);
-  cols = floor(width / w);
-  rows = floor(height / w);
-  grid = new Cell[cols][rows];
-  for (int j = 0; j < rows; j++) {
-    for (int i = 0; i < cols; i++) {
-      grid[i][j]= new Cell(i, j); 
-    }
-  }
-  startCell = grid[0][0];
-  endCell = grid[cols - 1][rows - 1];
-  playerX = startCell.x * w + w / 2.0;
-  playerY = startCell.y * w + w / 2.0;
-
-  playerRadiusDefault = w * 0.4;
-  playerRadius = playerRadiusDefault;
-  targetPlayerRadius = playerRadiusDefault;
-  
-  current = grid[0][0];
-  current.visited = true;
-  mazeGenerated = false;
-  stack.clear();
-  gameState = STATE_MENU;
-}
 
 void generateStep() {
   current.visited = true;
@@ -37,6 +12,10 @@ void generateStep() {
     current = stack.pop();
   } else {
     mazeGenerated = true;
+    // Spawn first key when maze generation is complete
+    spawnFirstKey();
+    // Sperre die Endzelle nach der Maze-Generierung
+    lockEndCell();
   }
 }
 
@@ -50,3 +29,4 @@ void removeWalls(Cell a, Cell b) {
   if (dy == 1) { a.walls[0] = false; b.walls[2] = false; }
   else if (dy == -1) { a.walls[2] = false; b.walls[0] = false; }
 }
+
