@@ -71,6 +71,11 @@ void startCollisionAnimation() {
   shakeAmount = 5;
   triggerMistake();
   
+  // Play collision sound
+  if (collisionSound != null) {
+    collisionSound.play();
+  }
+  
   playerRadiusDefault *= 0.8;
   if (playerRadiusDefault < 3) {
     gameState = STATE_GAME_OVER;

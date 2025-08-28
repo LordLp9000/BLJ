@@ -2,6 +2,7 @@ import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import processing.sound.*;
 
 static final int STATE_MENU = 0;
 static final int STATE_GENERATING = 1;
@@ -39,6 +40,7 @@ ArrayList<Integer> highscores = new ArrayList<Integer>(); // Current seed's high
 int maxHighscores = 10;
 long lastFrameTime = 0;
 float deltaTime = 0;
+SoundFile collisionSound;
 
 void setup() {
   size(800, 800);
@@ -46,6 +48,11 @@ void setup() {
   smooth();
   surface.setTitle("Maze - Mouse Drag, Collisions, Highscores");
   textAlign(CENTER, CENTER);
+  
+  // Load collision sound - you can use any .wav or .mp3 file
+  // For now, we'll create a simple beep sound programmatically
+  collisionSound = new SoundFile(this, "data/collision.wav");
+  
   loadAllHighscores();
   loadCurrentSeedHighscores();
   initMaze();
@@ -101,7 +108,6 @@ return;
     
     fill(255);
     textSize(16);
-    text("Score: " + getCurrentScore(), width - 60, 20);
     
     int playerCellX = floor(playerX / w);
     int playerCellY = floor(playerY / w);
