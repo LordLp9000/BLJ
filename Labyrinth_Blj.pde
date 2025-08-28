@@ -2,8 +2,7 @@ import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import processing.sound.*;
-
+import processing.sound.*; // Uncomment this line after installing Sound library
 static final int STATE_MENU = 0;
 static final int STATE_GENERATING = 1;
 static final int STATE_PLAYING = 2;
@@ -41,6 +40,11 @@ int maxHighscores = 10;
 long lastFrameTime = 0;
 float deltaTime = 0;
 SoundFile collisionSound;
+SoundFile deathSound;
+SoundFile winSound;
+SoundFile keySound;
+SinOsc beepOsc;
+Env beepEnv;
 
 void setup() {
   size(800, 800);
@@ -49,9 +53,38 @@ void setup() {
   surface.setTitle("Maze - Mouse Drag, Collisions, Highscores");
   textAlign(CENTER, CENTER);
   
-  // Load collision sound - you can use any .wav or .mp3 file
-  // For now, we'll create a simple beep sound programmatically
-  collisionSound = new SoundFile(this, "data/collision.wav");
+  // Load sound files
+  try {
+    collisionSound = new SoundFile(this, "data/collision.mp3");
+    println("Collision sound loaded");
+  } catch (Exception e) {
+    println("Collision sound not found");
+  }
+  
+  try {
+    deathSound = new SoundFile(this, "data/death.mp3");
+    println("Death sound loaded");
+  } catch (Exception e) {
+    println("Death sound not found");
+  }
+  
+  try {
+    winSound = new SoundFile(this, "data/win.mp3");
+    println("Win sound loaded");
+  } catch (Exception e) {
+    println("Win sound not found");
+  }
+  
+  try {
+    keySound = new SoundFile(this, "data/key.mp3");
+    println("Key sound loaded");
+  } catch (Exception e) {
+    println("Key sound not found");
+  }
+  
+  // Create programmatic beep as fallback
+  beepOsc = new SinOsc(this);
+  beepEnv = new Env(this);
   
   loadAllHighscores();
   loadCurrentSeedHighscores();
@@ -113,6 +146,10 @@ return;
     int playerCellY = floor(playerY / w);
     
     if (playerCellX == endCell.x && playerCellY == endCell.y) {
+      // Play win sound
+      if (winSound != null) {
+        winSound.play();
+      }
       gameEndScore = getCurrentScore();
       addHighscore(gameEndScore);
       saveCurrentSeedHighscores();
@@ -127,6 +164,25 @@ return;
     drawGameOver();
   }
 }
+
+// Key System Functions (not yet active)
+void playKeySound() {
+  // Function to play key collection sound
+  if (keySound != null) {
+    keySound.play();
+  } else if (beepOsc != null && beepEnv != null) {
+    // Play programmatic beep for key collection
+    beepOsc.freq(1200); // Higher frequency for positive feedback
+    beepEnv.play(beepOsc, 0.01, 0.05, 0.8, 0.05); // Short, pleasant beep
+  }
+}
+
+// TODO: Add key collection logic here
+// void collectKey(int x, int y) {
+//   playKeySound();
+//   // Add key collection logic
+//   // Update score, remove key from grid, etc.
+// }
 
 void mousePressed() {
   if (gameState == STATE_MENU) {
